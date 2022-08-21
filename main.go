@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"reflect"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/gocolly/colly"
@@ -24,12 +25,26 @@ func errorHandler(err error) {
 
 func getElvuiVersion() string {
 	c := colly.NewCollector()
+	//var tableRefs []string
+	//var elvuiVersion string
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		fmt.Println("Find links:", e)
-		fmt.Println(reflect.TypeOf(e))
+		if strings.Contains(e.Attr("href"), "elvui") {
+
+			elvuiContains := strings.TrimSpace(e.Text)
+
+			fmt.Println(elvuiContains)
+
+			re := regexp.MustCompile("[0-9]+")
+
+			fmt.Println(re.FindAllString(elvuiContains, -1))
+		}
+		// fmt.Println("Find links:", strings.Split(e.Attr("href"), "elvui"))
 	})
 
-	c.Visit("https://www.tukui.org/welcome.php")
+	err := c.Visit("https://www.tukui.org/welcome.php")
+	if err != nil {
+		return ""
+	}
 
 	return "Catching webSite"
 }
@@ -68,6 +83,7 @@ func main() {
 		checkPackageVersion(response, pathForInstall)
 	} else {
 		fmt.Println("No file exist ...")
+		fmt.Println("End program. Please create file_path.txt ....")
 		time.Sleep(5 * time.Second)
 		return
 	}
