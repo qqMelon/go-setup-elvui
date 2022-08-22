@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go-setup-elvui/utils"
 	"os"
 	"regexp"
 	"strings"
@@ -12,15 +13,9 @@ import (
 
 func fileReader(filename string) string {
 	data, err := os.ReadFile(filename)
-	errorHandler(err)
+	utils.ErrorHandler(err)
 
 	return string(data)
-}
-
-func errorHandler(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
 
 func getElvuiVersion() string {
